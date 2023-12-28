@@ -21,7 +21,6 @@ std::vector<std::vector<char>> readPatternFromFile(const std::string& filename) 
 
     if (!file.is_open()) {
         std::cerr << "Error opening file " << filename << std::endl;
-        // You might want to handle the error in a way that fits your application
         exit(EXIT_FAILURE);
     }
 
@@ -188,11 +187,7 @@ int main(int argc, char* argv[]) {
     timing->stopSetup();
 
     /*============================================= Initial Step End ======================================================*/
-    /*
-    // Print the initial pattern
-    std::cout << "Initial Pattern:" << std::endl;
-    printGrid(pattern);
-    */
+
     /*========================================== Computation Start ================================================*/
 
     // Measure computation time
@@ -205,12 +200,7 @@ int main(int argc, char* argv[]) {
     timing->stopComputation();
 
     /*========================================== Computation End ================================================*/
-    /*
-    // Print the final pattern
-    std::cout << "\nFinal Pattern after " << generations << " iterations:" << std::endl;
-    printGrid(pattern);
-    std::cout << "\n";
-    */
+
     /*========================================== Finalization Start ================================================*/
 
     // Measure finalization time
