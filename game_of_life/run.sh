@@ -10,7 +10,6 @@ outputfile="./dumb.txt"
 # Compile the C++ file
 g++ -fopenmp -o $executable $cpp_file
 
-num_runs=1  # Adjust this to the desired number of runs
 min_iterations=1000
 max_iterations=10000
 
@@ -20,15 +19,13 @@ for ((current_run_number = min_iterations; current_run_number <= max_iterations;
     load_file="../step1000_in_250generations/random${current_run_number}_in.gol"
     save_file="${save_file_1}_${current_run_number}_${save_file_2}"
 
-    # Run the C++ program multiple times and append measurements to the CSV file
-    for ((i = 1; i <= num_runs; i++)); do
-        echo "Running iteration $i for current_run_number $current_run_number..."
-
-        $executable --load "$load_file" --save "$save_file" --generations 250 --measure t >> "$outputfile"
-
-    done
+    echo "Running current_run_number $current_run_number..."
+    $executable --load "$load_file" --save "$save_file" --generations 250 --measure t >> "$outputfile"
 
 done
+
+# run checking script
+python3 output_check.py
 
 
 rm $outputfile

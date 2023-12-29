@@ -86,5 +86,7 @@ for fastest_time in "${fastest_computation_times[@]}"; do
     echo "$fastest_time" >> "$csv_file"
 done
 
+# run checking script
+python3 output_check.py
 
 rm $outputfile
