@@ -9,6 +9,13 @@
 #include "Timing.h"
 #include "./gol_seq/gol_seq.h"
 #include "./gol_parallel/gol_parallel.h"
+#include "./gol_parallel_after_session/gol_parallel_after_session.h"
+
+
+// define modes
+#define SEQ "seq"
+#define OMP "omp"
+#define OMP_AFTER_SESSION "omp_after_session"
 
 /*===========================================================================================================================================*/
 /*============================================================== Helper Functions ===========================================================*/
@@ -42,7 +49,7 @@ void handleInputArguments(int argc, char* const* argv, std::string *mode, int *t
     cxxopts::Options options("Game of Life 2", "Game of Life 2 Description");
 
     options.add_options()
-        ("mode", "<seq | omp> Mode sequential or parallel", cxxopts::value<std::string>())
+        ("mode", "<seq | omp | omp_after_session> Mode sequential or parallel", cxxopts::value<std::string>())
         ("threads", "<NUM> (parallel OpenMP version with NUM threads)", cxxopts::value<int>())
         ("load", "<filename> (filename to read input board - Mandatory)", cxxopts::value<std::string>())
         ("save", "<filename> (filename to save output board - Mandatory)", cxxopts::value<std::string>())
@@ -62,13 +69,15 @@ void handleInputArguments(int argc, char* const* argv, std::string *mode, int *t
         if (result.count("mode"))
             *mode = result["mode"].as<std::string>();
 
-        if (result["mode"].as<std::string>() == "omp")
+        if (result["mode"].as<std::string>() == OMP || result["mode"].as<std::string>() == OMP_AFTER_SESSION)
         {
-            if (result.count("threads"))
+            if (result.count("threads")){
                 *threads = result["threads"].as<int>();
+            }
             else
                 *threads = omp_get_max_threads();
-        }
+        } else
+            *threads = 1;
 
         if (result.count("load"))
             *input_filename = result["load"].as<std::string>();
@@ -88,7 +97,8 @@ void handleInputArguments(int argc, char* const* argv, std::string *mode, int *t
         }
 
 
-        if (input_filename->empty() || output_filename->empty() || (result["mode"].as<std::string>() != "seq" && result["mode"].as<std::string>() != "omp") ||
+        if (input_filename->empty() || output_filename->empty() || 
+            (result["mode"].as<std::string>() != SEQ && result["mode"].as<std::string>() != OMP && result["mode"].as<std::string>() != OMP_AFTER_SESSION) ||
             (result["measure"].as<std::string>() != "True" && result["measure"].as<std::string>() != "true" && result["measure"].as<std::string>() != "t" &&
              result["measure"].as<std::string>() != "False" && result["measure"].as<std::string>() != "false" && result["measure"].as<std::string>() != "f")) {
 
@@ -123,6 +133,10 @@ int main(int argc, char* argv[]) {
     unsigned char* pattern_par;
     int rows, cols;
 
+    // parallel version after session
+    unsigned char* pattern_par_after_session;
+    int rows_after_session, cols_after_session;
+
     /*============================================= Initial Step Start ====================================================*/
 
     // Measure setup time
@@ -132,10 +146,12 @@ int main(int argc, char* argv[]) {
     handleInputArguments(argc, argv, &mode, &threads, &input_filename, &output_filename, &generations, &show_measure);
 
     // Read the pattern from the file
-    if (mode == "seq")
+    if (mode == SEQ)
         pattern_seq = readPatternFromFile(input_filename);
-    else if (mode == "omp")
+    else if (mode == OMP)
         pattern_par = readPatternFromFileParallel(input_filename, rows, cols);
+    else if (mode == OMP_AFTER_SESSION)
+        pattern_par_after_session = readPatternFromFileParallelAfterSession(input_filename, rows_after_session, cols_after_session);
 
     timing->stopSetup();
 
@@ -146,14 +162,18 @@ int main(int argc, char* argv[]) {
     // Measure computation time
     timing->startComputation();
 
-    if (mode == "seq"){
+    if (mode == SEQ){
         for (int step = 0; step < generations; ++step) {
             gameOfLifeStep(pattern_seq);
         }
     }
-    else if (mode == "omp"){
+    else if (mode == OMP){
         
         gameOfLifeStepParallel(pattern_par, generations, threads, rows, cols);
+    }
+    else if (mode == OMP_AFTER_SESSION){
+        
+        gameOfLifeStepParallelAfterSession(pattern_par_after_session, generations, threads, rows_after_session, cols_after_session);
     }
 
     timing->stopComputation();
@@ -165,10 +185,12 @@ int main(int argc, char* argv[]) {
     // Measure finalization time
     timing->startFinalization();
 
-    if (mode == "seq")
+    if (mode == SEQ)
         writeDataFromGame(output_filename, pattern_seq);
-    else if (mode == "omp")
+    else if (mode == OMP)
         writeDataFromGameParallel(output_filename, pattern_par, rows, cols);
+    else if (mode == OMP_AFTER_SESSION)
+        writeDataFromGameParallelAfterSession(output_filename, pattern_par_after_session, rows_after_session, cols_after_session);
 
     timing->stopFinalization();
 
@@ -186,10 +208,12 @@ int main(int argc, char* argv[]) {
         // Save results to CSV file
         if (!results.empty()) {
 
-            if (mode == "seq")
+            if (mode == SEQ)
                 csvFilename = folderName + "ai23m020_cpu_time.csv";
-            else if (mode == "omp")
+            else if (mode == OMP)
                 csvFilename = folderName + "ai23m020_openmp_time.csv";
+            else if (mode == OMP_AFTER_SESSION)
+                csvFilename = folderName + "ai23m020_openmp_after_session_time.csv";
 
             // Check if the CSV file already exists
             std::ifstream file(csvFilename);

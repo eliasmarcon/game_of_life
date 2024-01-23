@@ -1,16 +1,16 @@
 #!/bin/bash
 
 # Check for the number of tasks and diameter arguments
-# if [ "$#" -gt 2 ]; then
-#     echo "Usage: $0 [<mode>] [<num_runs>]"
-#     exit 1
-# fi
+if [ "$#" -gt 2 ]; then
+    echo "Usage: $0 [<mode>] [<num_runs>]"
+    exit 1
+fi
 
 # Set default values if arguments are not provided
-# mode=${1:-"seq"}
-# num_runs=${2:-"2"}
-mode="$MODE"
-num_runs="$ITERATIONS"
+mode=${1:-"seq"}
+num_runs=${2:-"2"}
+# mode="$MODE"
+# num_runs="$ITERATIONS"
 
 
 # Define the C++ file to be compiled and executed
@@ -20,7 +20,8 @@ save_file_1="./output_files/ai23m020"
 outputfile="./dumb.txt"
 
 # Compile the C++ file
-g++ -fopenmp -o $executable $cpp_file
+#g++ -fopenmp -o $executable $cpp_file
+make all
 
 # Array to store the fastest computation time
 fastest_computation_times=()
@@ -33,6 +34,9 @@ if [ "$mode" == "seq" ]; then
 elif [ "$mode" == "omp" ]; then
     csv_file="./csv_files/ai23m020_openmp_time.csv"
     save_file_2="openmp_out.txt"
+elif [ "$mode" == "omp_after_session" ]; then
+    csv_file="./csv_files/ai23m020_omp_after_session_time.csv"
+    save_file_2="openmp_after_session_out.txt"
 else
     echo "Invalid mode: $mode. Exiting..."
     exit 1
