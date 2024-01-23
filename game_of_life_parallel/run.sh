@@ -1,14 +1,17 @@
 #!/bin/bash
 
 # Check for the number of tasks and diameter arguments
-if [ "$#" -gt 2 ]; then
-    echo "Usage: $0 [<mode>] [<num_runs>]"
-    exit 1
-fi
+# if [ "$#" -gt 2 ]; then
+#     echo "Usage: $0 [<mode>] [<num_runs>]"
+#     exit 1
+# fi
 
 # Set default values if arguments are not provided
-mode=${1:-"seq"}
-num_runs=${2:-"2"}
+# mode=${1:-"seq"}
+# num_runs=${2:-"2"}
+mode="$MODE"
+num_runs="$ITERATIONS"
+
 
 # Define the C++ file to be compiled and executed
 cpp_file="main.cpp Timing.cpp ./gol_seq/gol_seq.cpp ./gol_parallel/gol_parallel.cpp"

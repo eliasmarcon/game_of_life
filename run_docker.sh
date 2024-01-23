@@ -1,20 +1,21 @@
 #!/bin/bash
 
 # Check for the number of arguments
-if [ "$#" -eq 1 ]; then
+if [ "$#" -eq 2 ]; then
     mode=$1
+    iterations=$2
 else
-    echo "Usage: ./run_docker.sh <mode>"
+    echo "Usage: ./run_docker.sh <mode> <iterations>"
     exit 1
 fi
 
 echo -e "\nBuilding the Docker image...\n"
 # Build the docker image
-docker build -t game_of_life .
+docker build --build-arg MODE="$mode" --build-arg ITERATIONS="$iterations" -t game_of_life .
 
 echo -e "\nRunning the Docker container...\n"
 # Run the docker container
-docker run -it game_of_life
+docker run -e MODE="$mode" -e ITERATIONS="$iterations" -it game_of_life
 
 echo -e "\nCopying the output files from the Docker container to the host...\n"
 # Get the Docker container ID

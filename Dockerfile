@@ -25,5 +25,6 @@ WORKDIR /app/game_of_life_parallel
 RUN dos2unix run.sh && \
     chmod +x run.sh
 
+
 # Run your application
-CMD ["bash", "run.sh", "omp", "1"]
+CMD ["bash", "run.sh", "MODE", "ITERATIONS"]
