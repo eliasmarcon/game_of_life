@@ -27,11 +27,15 @@ if __name__ == "__main__":
         
         if input_mode == "seq":
             file1_path = f'./output_files/ai23m020_{i}_cpu_out.txt'
-            compare_text_files(file1_path, file3_path, i, "cpu")
+            compare_text_files(file1_path, file3_path, i, input_mode)
         
         elif input_mode == "omp":
             file2_path = f'./output_files/ai23m020_{i}_openmp_out.txt'
-            compare_text_files(file2_path, file3_path, i, "openmp")
+            compare_text_files(file2_path, file3_path, i, input_mode)
+            
+        elif input_mode == "omp_after_session":
+            file2_path = f'./output_files/ai23m020_{i}_openmp_after_session_out.txt'
+            compare_text_files(file2_path, file3_path, i, input_mode)
         
         else:
             break

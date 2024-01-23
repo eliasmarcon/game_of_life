@@ -101,7 +101,7 @@ void gameOfLifeStepParallelAfterSession(unsigned char* grid, int& generations, i
             }
         }
 
-        // Swap pointers instead of using memcpy
+        // Swap pointers
         std::swap(current_board, next_board);
     }
 

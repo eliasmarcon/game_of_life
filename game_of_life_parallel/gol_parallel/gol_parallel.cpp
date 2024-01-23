@@ -119,8 +119,8 @@ void gameOfLifeStepParallel(unsigned char* grid, int& generations, int& threads,
             }
         }
 
-        // Copy the temporary board to the current board outside the parallel region
-        memcpy(grid, next_board, rows * cols * sizeof(unsigned char));
+        // Swap pointers
+        std::swap(grid, next_board);
     }
 
     // Free the allocated memory for the temporary board
