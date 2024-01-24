@@ -105,7 +105,6 @@ void gameOfLifeStepParallelAfterSession(unsigned char* grid, int& generations, i
         std::swap(current_board, next_board);
     }
 
-    // No need to copy the final result, as current_board is the final state
     // Free the allocated memory for the temporary board
     free(next_board);
 }

@@ -9,7 +9,8 @@ else
     exit 1
 fi
 
-modes=("seq" "omp" "omp_after_session")
+# modes=("seq" "omp" "omp_after_session")
+modes=("omp_after_session")
 
 for mode in "${modes[@]}"; do
     
@@ -38,6 +39,11 @@ for mode in "${modes[@]}"; do
         echo "Invalid mode"
         exit 1
     fi
+
+    echo -e "\nCopying all results from the Docker container to the host...\n"
+    # Copy the output files from the Docker container to the host output_files directory
+    docker cp "$DOCKER_ID:/app/game_of_life_parallel/output_files" ./game_of_life_parallel
+
 
     echo -e "\nDeleting the Docker container..."
     # Delete the Docker container

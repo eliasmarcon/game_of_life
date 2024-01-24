@@ -167,14 +167,10 @@ int main(int argc, char* argv[]) {
             gameOfLifeStep(pattern_seq);
         }
     }
-    else if (mode == OMP){
-        
+    else if (mode == OMP)
         gameOfLifeStepParallel(pattern_par, generations, threads, rows, cols);
-    }
-    else if (mode == OMP_AFTER_SESSION){
-        
+    else if (mode == OMP_AFTER_SESSION)
         gameOfLifeStepParallelAfterSession(pattern_par_after_session, generations, threads, rows_after_session, cols_after_session);
-    }
 
     timing->stopComputation();
 

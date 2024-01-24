@@ -54,16 +54,6 @@ for ((current_run_number = min_iterations; current_run_number <= max_iterations;
     load_file="../step1000_in_250generations/random${current_run_number}_in.gol"
     save_file="${save_file_1}_${current_run_number}_${save_file_2}"
 
-    # Run the C++ program multiple times and append measurements to the CSV file
-    # for ((i = 1; i <= num_runs; i++)); do
-    #     echo "Running iteration $i for current_run_number $current_run_number..."
-    #     if [ "$mode" == "seq" ]; then
-    #         $executable --mode "$mode" --load "$load_file" --save "$save_file" --generations 250 --measure t >> "$outputfile"
-    #     elif [ "$mode" == "omp" ]; then
-    #         $executable --mode "$mode" --threads 16 --load "$load_file" --save "$save_file" --generations 250 --measure t >> "$outputfile"
-    #     fi
-    # done
-
     for ((i = 1; i <= num_runs; i++)); do
         echo "Running iteration $i for current_run_number $current_run_number..."
         $executable --mode "$mode" --load "$load_file" --save "$save_file" --generations 250 --measure t >> "$outputfile"
@@ -74,13 +64,7 @@ for ((current_run_number = min_iterations; current_run_number <= max_iterations;
 
     # Find the fastest element based on the second element (computation time)
     fastest_computation_time=$(tail -n +2 "$csv_file" | awk -F ';' '{print $2}' | sort -n | head -n 1)
-
-    #echo "Fastest computation time $fastest_computation_time for $current_run_number"
-    #mapfile -t all_elements < <(tail -n +2 "$csv_file")
-    #for element in "${all_elements[@]}"; do
-    #    echo "$element"
-    #done
-
+    
     # Find and save the corresponding fastest element(s)
     fastest_element=$(grep "$fastest_computation_time" "$csv_file")
 
